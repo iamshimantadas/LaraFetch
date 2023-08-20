@@ -45,8 +45,7 @@ class fileDownloadController extends Controller
          //ietf.org has MX records signaling a server with email capabilities
      $res = $validator->isValid("$email", $multipleValidations); //true
      
-
-     if($res){
+     if(session()->get('userDownloadMail')){
 
         // saving download file reocrd into database.
         $download = new Downloads;
@@ -58,18 +57,40 @@ class fileDownloadController extends Controller
         $download->loc = $_SERVER['REMOTE_ADDR'];
         $download->save();
 
-
         return view('finalDownload',['file'=>$fileName,'topic'=>$topic]);
 
-     }
-     else{
-        return "<font style='color:red;font-size:30px;'>
-        Please go-back and provide valid email address!!
-        </font>
-        <br><br><br><br>
-        ";
-     }
-    }
+     }else{
 
+        if($res){
+
+            // saving download file reocrd into database.
+            $download = new Downloads;
+            $download->name = $topic;
+            $download->email = $email;
+            $download->date = date("Y/m/d");
+            date_default_timezone_set("Asia/Kolkata");
+            $download->time = date("h:i:sa");
+            $download->loc = $_SERVER['REMOTE_ADDR'];
+            $download->save();
+    
+            // Via the global "session" helper...
+            session(['userDownloadMail' => $email]);
+    
+    
+            return view('finalDownload',['file'=>$fileName,'topic'=>$topic]);
+    
+         }
+         else{
+            return "<font style='color:red;font-size:30px;'>
+            Please go-back and provide valid email address!!
+            </font>
+            <br><br><br><br>
+            ";
+         }
+
+     }
+
+
+    }
 
 }

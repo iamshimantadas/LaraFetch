@@ -99,23 +99,27 @@ h2 {
   <br>
   <br>
 
-  <form action="{{url('/')}}/final_download" method="GET" id="processFRM">
+  <?php 
+  $mail = session()->get('userDownloadMail');
+  $usermail = session('userDownloadMail');
+
+  if($mail){  ?>
+   
+   <form action="{{url('/')}}/final_download" method="GET" id="processFRM">
     <input type="hidden" name="topic" value="{{$topic}}" required>
     <input type="hidden" name="fileName" value="{{$filename}}" required>
-    <input type="text" style="font-size:30px;" placeholder="Enter your email" name="emailbox" required>
+    <input type="hidden" style="font-size:30px;" placeholder="Enter your email" name="emailbox" value="<?php echo $usermail; ?>" required>
     @error('emailbox')
     <span style="color:red;">{{$message}}</span>
     @enderror
     <br>
-    <small>Don't worry we will never share your email address with any third parties.</small>
     <br>
     <br>
     <br>
-    <button type="submit" style="font-size:50px;color:white;background-color:blue;">GET LINK</button>
+    <button type="submit" style="font-size:50px;color:white;background-color:blue;">GO TO DOWNLOAD PAGE</button>
   </form>
 
-</body>
-<script>
+  <script>
 $(document).ready(function(){
     $('#processFRM').hide();
 
@@ -140,5 +144,60 @@ const countdownInterval = setInterval(() => {
 
 });
 </script>
+
+
+    <?php } else{ ?>
+  
+      <form action="{{url('/')}}/final_download" method="GET" id="processFRM">
+    <input type="hidden" name="topic" value="{{$topic}}" required>
+    <input type="hidden" name="fileName" value="{{$filename}}" required>
+    <input type="text" style="font-size:30px;" placeholder="Enter your email" name="emailbox" required>
+    @error('emailbox')
+    <span style="color:red;">{{$message}}</span>
+    @enderror
+    <br>
+    <small>Don't worry we will never share your email address with any third parties.</small>
+    <br>
+    <br>
+    <br>
+    <button type="submit" style="font-size:50px;color:white;background-color:blue;">GET LINK</button>
+  </form>
+
+  <script>
+$(document).ready(function(){
+    $('#processFRM').hide();
+
+    // countdown script
+    const countdownElement = document.getElementById('countdown');
+let countdown = <?php echo $sec; ?>;
+
+countdownElement.textContent = `Please wait for ${countdown} seconds...`;
+
+const countdownInterval = setInterval(() => {
+  countdown--;
+  countdownElement.textContent = `Please wait for ${countdown} seconds...`;
+
+  if (countdown === 0) {
+    clearInterval(countdownInterval);
+    countdownElement.textContent = 'Done!';
+    $('#containerLoader').hide();
+    $('#processFRM').show();
+  }
+}, 1000);
+
+
+});
+</script>
+  
+  <?php
+  }
+    ?>
+
+
+   
+
+
+</body>
+
 
 </html>
